@@ -1,17 +1,29 @@
+from datetime import datetime
+
 import cv2
 import face_recognition
 import numpy as np
+import pandas as pd
 
 
 def faceBox(faceNet, frame):
+    # get frame height
     frameHeight = frame.shape[0]
+    # get frame width
     frameWidth = frame.shape[1]
+    # creates 4-dimensional blob from image
     blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300), [104, 117, 123], swapRB=False)
+    #  pass the blob through the network and obtain the face detections
     faceNet.setInput(blob)
     detection = faceNet.forward()
     bboxs = []
+
+    # loop over the detections
     for i in range(detection.shape[2]):
+        # extract the confidence (i.e., probability) associated with the prediction
         confidence = detection[0, 0, i, 2]
+        # filter out weak detections by ensuring the confidence is
+        # greater than the minimum confidence
         if confidence > 0.7:
             x1 = int(detection[0, 0, i, 3] * frameWidth)
             y1 = int(detection[0, 0, i, 4] * frameHeight)
@@ -112,6 +124,14 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
+                    # write name to csv
+                    names = pd.DataFrame([[name]],
+                                          columns=['Name'])
+                    now = datetime.now()
+
+                    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+                    names.to_csv('attendance.csv')
 
                 face_names.append(name)
 
