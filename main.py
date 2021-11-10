@@ -1,9 +1,37 @@
+import os
 from datetime import datetime
 
 import cv2
 import face_recognition
 import numpy as np
 import pandas as pd
+
+# **   ANTI SPOOFING       ** #
+# Anti spoofing directories
+train_dir = "antispoofing_dataset/train"
+test_dir = "antispoofing_dataset/test"
+
+# Dataset Exploration
+categories = ["real", "spoof"]
+print("---------------------Exploring Training Datasets--------------------")
+for category in categories:
+    path = os.path.join(train_dir, category)
+    if category == 'real':
+        r1 = len(os.listdir(path))
+    else:
+        s1 = len(os.listdir(path))
+    print("There are {} images in {} directory".format(len(os.listdir(path)), category))
+print("There are {} total images in training directory".format(r1 + s1))
+
+print("-----------------------Exploring Testing Datasets-------------------------")
+for category in categories:
+    path = os.path.join(test_dir, category)
+    if category == 'real':
+        r2 = len(os.listdir(path))
+    else:
+        s2 = len(os.listdir(path))
+    print("There are {} images in {} directory".format(len(os.listdir(path)), category))
+print("There are {} total images in testing directory".format(r2 + s2))
 
 
 def faceBox(faceNet, frame):
@@ -126,7 +154,7 @@ while True:
                     name = known_face_names[best_match_index]
                     # write name to csv
                     names = pd.DataFrame([[name]],
-                                          columns=['Name'])
+                                         columns=['Name'])
                     now = datetime.now()
 
                     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -146,12 +174,17 @@ while True:
             left *= 4
 
             # Draw a box around the face
-            #cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+            # cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
             # Draw a label with a name below the face
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+            if name == "Unknown":
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+            else:
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
         label = "{},{}".format(gender, age)
         cv2.rectangle(frame, (bbox[0], bbox[1] - 30), (bbox[2], bbox[1]), (0, 255, 0), -1)
