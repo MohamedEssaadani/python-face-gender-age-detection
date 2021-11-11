@@ -1,37 +1,26 @@
-import os
 from datetime import datetime
 
 import cv2
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import model_from_json
+import os
 import face_recognition
 import numpy as np
 import pandas as pd
 
-# **   ANTI SPOOFING       ** #
-# Anti spoofing directories
-train_dir = "antispoofing_dataset/train"
-test_dir = "antispoofing_dataset/test"
 
-# Dataset Exploration
-categories = ["real", "spoof"]
-print("---------------------Exploring Training Datasets--------------------")
-for category in categories:
-    path = os.path.join(train_dir, category)
-    if category == 'real':
-        r1 = len(os.listdir(path))
-    else:
-        s1 = len(os.listdir(path))
-    print("There are {} images in {} directory".format(len(os.listdir(path)), category))
-print("There are {} total images in training directory".format(r1 + s1))
+#root_dir = os.getcwd()
+# Load face detection model
+#face_cascade = cv2.CascadeClassifier("models/haarcascade_frontalface_default.xml")
+# Load anti spoofing model graph
+#json_file = open('antispoofing_models/antispoofing_model_mobilenet.json', "r")
+#loaded_model_json = json_file.read()
+#json_file.close()
+#model = model_from_json(loaded_model_json)
+# load antispoofing model weights
+#model.load_weights("antispoofing_models/antispoofing_model.h5")
 
-print("-----------------------Exploring Testing Datasets-------------------------")
-for category in categories:
-    path = os.path.join(test_dir, category)
-    if category == 'real':
-        r2 = len(os.listdir(path))
-    else:
-        s2 = len(os.listdir(path))
-    print("There are {} images in {} directory".format(len(os.listdir(path)), category))
-print("There are {} total images in testing directory".format(r2 + s2))
+#print("Model loaded successfully from disk")
 
 
 def faceBox(faceNet, frame):
