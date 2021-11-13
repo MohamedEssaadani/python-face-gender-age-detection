@@ -7,6 +7,7 @@ import os
 import face_recognition
 import numpy as np
 import pandas as pd
+import winsound
 
 
 #root_dir = os.getcwd()
@@ -174,6 +175,9 @@ while True:
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                frequency = 2500  # Set Frequency To 2500 Hertz
+                duration = 1000  # Set Duration To 1000 ms == 1 second
+                winsound.Beep(frequency, duration)
 
         label = "{},{}".format(gender, age)
         cv2.rectangle(frame, (bbox[0], bbox[1] - 30), (bbox[2], bbox[1]), (0, 255, 0), -1)
